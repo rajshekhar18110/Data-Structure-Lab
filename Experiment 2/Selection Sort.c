@@ -1,3 +1,5 @@
+//Write a program to sort the elements of an array in descending order using the Selection Sort algorithm.
+
 #include <stdio.h>
 
 void selectionSort(int arr[], int n) {
@@ -19,21 +21,13 @@ void selectionSort(int arr[], int n) {
 
 int main() {
     int n;
-
-    // Input number of elements in the array
     scanf("%d", &n);
 
     int arr[n];
-
-    // Input array elements
     for (int i = 0; i < n; i++) {
         scanf("%d", &arr[i]);
     }
-
-    // Sort the array in descending order using selection sort
     selectionSort(arr, n);
-
-    // Output the sorted array
     for (int i = 0; i < n; i++) {
         printf("%d ", arr[i]);
     }
