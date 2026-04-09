@@ -1,0 +1,119 @@
+/*Write a C program to represent a Directed Graph using an adjacency list.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int vertex;
+    struct node *next;
+};
+
+typedef struct node *GNODE;
+GNODE graph[21];
+
+void printGraph(int N) {
+    printf("\nAdjacency List:\n");
+    for (int i = 1; i <= N; i++) {
+        printf("%d => ", i);
+        GNODE p = graph[i];
+        while (p != NULL) {
+            printf("%d ", p->vertex);
+            p = p->next;
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int N = 0, choice;
+    while (1) {
+        printf("\n1. Insert Vertex\n2. Insert Edge\n3. Delete Edge\n4. Delete Vertex\n5. Print Graph\n6. Exit\nChoice: ");
+        if (scanf("%d", &choice) != 1) break;
+
+        if (choice == 1) {
+            if (N >= 20) { printf("Full\n"); continue; }
+            N++;
+            graph[N] = NULL;
+            int edges, v;
+            
+            printf("Edges to %d: ", N);
+            scanf("%d", &edges);
+            for (int i = 0; i < edges; i++) {
+                scanf("%d", &v);
+                if (v < 1 || v >= N) continue;
+                GNODE n = (GNODE)malloc(sizeof(struct node));
+                n->vertex = N;
+                n->next = graph[v];
+                graph[v] = n;
+            }
+
+            printf("Edges from %d: ", N);
+            scanf("%d", &edges);
+            for (int i = 0; i < edges; i++) {
+                scanf("%d", &v);
+                if (v < 1 || v > N) continue;
+                GNODE n = (GNODE)malloc(sizeof(struct node));
+                n->vertex = v;
+                n->next = graph[N];
+                graph[N] = n;
+            }
+            printGraph(N);
+        }
+        else if (choice == 2) {
+            int s, d;
+            scanf("%d %d", &s, &d);
+            if (s < 1 || s > N || d < 1 || d > N) continue;
+            GNODE n = (GNODE)malloc(sizeof(struct node));
+            n->vertex = d;
+            n->next = graph[s];
+            graph[s] = n;
+            printGraph(N);
+        }
+        else if (choice == 3) {
+            int s, d;
+            scanf("%d %d", &s, &d);
+            if (s < 1 || s > N) continue;
+            GNODE c = graph[s], p = NULL;
+            while (c) {
+                if (c->vertex == d) {
+                    if (!p) graph[s] = c->next;
+                    else p->next = c->next;
+                    free(c);
+                    break;
+                }
+                p = c; c = c->next;
+            }
+            printGraph(N);
+        }
+        else if (choice == 4) {
+            int v;
+            scanf("%d", &v);
+            if (v < 1 || v > N) continue;
+
+            GNODE t = graph[v];
+            while (t) { GNODE tmp = t; t = t->next; free(tmp); }
+
+            for (int i = 1; i <= N; i++) {
+                if (i == v) continue;
+                GNODE c = graph[i], p = NULL;
+                while (c) {
+                    if (c->vertex == v) {
+                        GNODE tmp = c;
+                        if (!p) graph[i] = c = c->next;
+                        else { p->next = c->next; c = c->next; }
+                        free(tmp);
+                    } else {
+                        if (c->vertex > v) c->vertex--;
+                        p = c; c = c->next;
+                    }
+                }
+            }
+            for (int i = v; i < N; i++) graph[i] = graph[i + 1];
+            graph[N--] = NULL;
+            printGraph(N);
+        }
+        else if (choice == 5) printGraph(N);
+        else if (choice == 6) break;
+    }
+    return 0;
+}
